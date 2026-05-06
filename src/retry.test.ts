@@ -58,4 +58,17 @@ describe('withRetry', () => {
     await expect(promise).rejects.toThrow();
     expect(fn).toHaveBeenCalledTimes(5);
   });
+
+  it('passes the current attempt number to shouldRetry', async () => {
+    const shouldRetry = jest.fn().mockReturnValue(true);
+    const fn = jest.fn().mockRejectedValue(new Error('fail'));
+
+    const promise = withRetry(fn, { maxAttempts: 3, baseDelayMs: 0, shouldRetry });
+    await jest.runAllTimersAsync();
+    await expect(promise).rejects.toThrow();
+
+    expect(shouldRetry).toHaveBeenCalledTimes(2);
+    expect(shouldRetry).toHaveBeenNthCalledWith(1, expect.any(Error), 1);
+    expect(shouldRetry).toHaveBeenNthCalledWith(2, expect.any(Error), 2);
+  });
 });
