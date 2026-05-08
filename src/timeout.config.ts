@@ -25,8 +25,8 @@ export function buildTimeoutOptions(input: Partial<TimeoutOptions> | string = 'd
 }
 
 export function validateTimeoutOptions(opts: TimeoutOptions): void {
-  if (typeof opts.ms !== 'number' || opts.ms <= 0) {
-    throw new Error(`TimeoutOptions.ms must be a positive number, got: ${opts.ms}`);
+  if (typeof opts.ms !== 'number' || !Number.isFinite(opts.ms) || opts.ms <= 0) {
+    throw new Error(`TimeoutOptions.ms must be a finite positive number, got: ${opts.ms}`);
   }
   if (opts.onExpire !== undefined && typeof opts.onExpire !== 'function') {
     throw new Error('TimeoutOptions.onExpire must be a function');
@@ -35,4 +35,11 @@ export function validateTimeoutOptions(opts: TimeoutOptions): void {
 
 export function describeTimeoutState(state: Readonly<TimeoutState>): string {
   return `active=${state.active} cancelled=${state.cancelled} expired=${state.expired}`;
+}
+
+/**
+ * Returns the names of all available timeout presets.
+ */
+export function listTimeoutPresets(): string[] {
+  return Object.keys(PRESETS);
 }
