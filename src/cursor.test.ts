@@ -73,4 +73,15 @@ describe("createCursor", () => {
     cursor.advance(makeResponse("b"));
     expect(state1.current).toBe("a");
   });
+
+  it("accumulates multiple previous cursors in order", () => {
+    const cursor = createCursor({ ...opts, initialCursor: "page0" });
+    cursor.advance(makeResponse("page1"));
+    cursor.advance(makeResponse("page2"));
+    cursor.advance(makeResponse("page3"));
+    const state = cursor.getState();
+    expect(state.previous).toEqual(["page0", "page1", "page2"]);
+    expect(state.current).toBe("page3");
+    expect(state.pagesFetched).toBe(3);
+  });
 });
