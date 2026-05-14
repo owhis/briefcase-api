@@ -35,6 +35,13 @@ describe("buildWindowOptions", () => {
     expect(opts.durationMs).toBe(5_000);
     expect(opts.label).toBe("5s");
   });
+
+  it("applies partial overrides without losing other defaults", () => {
+    const defaults = buildWindowOptions();
+    const opts = buildWindowOptions({ label: "custom" });
+    expect(opts.durationMs).toBe(defaults.durationMs);
+    expect(opts.label).toBe("custom");
+  });
 });
 
 describe("validateWindowOptions", () => {
@@ -71,5 +78,11 @@ describe("listWindowPresets", () => {
     expect(names).toContain("second");
     expect(names).toContain("minute");
     expect(names).toContain("hour");
+  });
+
+  it("returns an array with no duplicate names", () => {
+    const names = listWindowPresets();
+    const unique = new Set(names);
+    expect(unique.size).toBe(names.length);
   });
 });
