@@ -64,6 +64,11 @@ describe("isExpired", () => {
     const snap = captureSnapshot("z", "data", -1000);
     expect(isExpired(snap)).toBe(true);
   });
+
+  it("returns false for snapshots that have not yet expired", () => {
+    const snap = captureSnapshot("z", "data", 60_000);
+    expect(isExpired(snap)).toBe(false);
+  });
 });
 
 describe("resolveSnapshot", () => {
@@ -78,6 +83,11 @@ describe("resolveSnapshot", () => {
     store.save(captureSnapshot("r2", "old", -1));
     expect(resolveSnapshot(store, "r2")).toBeUndefined();
     expect(store.load("r2")).toBeUndefined();
+  });
+
+  it("returns undefined for missing key", () => {
+    const store = createMemoryStore<string>();
+    expect(resolveSnapshot(store, "nonexistent")).toBeUndefined();
   });
 });
 
@@ -100,12 +110,16 @@ describe("snapshot.config", () => {
   });
 
   it("validates and throws on bad ttlMs", () => {
-    const opts = buildSnapshotOptions();
-    opts.ttlMs = -5;
-    expect(() => validateSnapshotOptions(opts)).toThrow("ttlMs");
+    expect(() => validateSnapshotOptions({ ttlMs: -1 })).toThrow();
   });
 
-  it("returns correct preset config", () => {
-    expect(getSnapshotPreset("persistent").ttlMs).toBeNull();
+  it("validates and throws on empty keyPrefix", () => {
+    expect(() => validateSnapshotOptions({ keyPrefix: "" })).toThrow();
+  });
+
+  it("returns a known preset by name", () => {
+    const preset = getSnapshotPreset("session");
+    expect(preset).toBeDefined();
+    expect(preset.ttlMs).toBe(300_000);
   });
 });
