@@ -48,3 +48,14 @@ export function validateThrottleOptions(options: ThrottleOptions): void {
     );
   }
 }
+
+/**
+ * Return the effective request rate for a given ThrottleOptions config,
+ * expressed as requests per second. Useful for logging and diagnostics.
+ *
+ * @example
+ * getRequestRate({ maxRequests: 30, windowMs: 10_000 }) // => 3
+ */
+export function getRequestRate(options: ThrottleOptions): number {
+  return options.maxRequests / (options.windowMs / 1_000);
+}
