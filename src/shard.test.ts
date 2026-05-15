@@ -50,6 +50,14 @@ describe("createShard", () => {
     const fixed = createShard({ buckets: 4, hash: () => 2 });
     expect(fixed.assign("any")).toBe(2);
   });
+
+  it("assign is idempotent — reassigning the same key returns the same bucket", () => {
+    const first = shard.assign("idempotent");
+    const second = shard.assign("idempotent");
+    expect(second).toBe(first);
+    // Ensure the key is only tracked once in state
+    expect(shard.getState().assigned.size).toBe(1);
+  });
 });
 
 describe("shard.config", () => {
