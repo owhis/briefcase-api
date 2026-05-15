@@ -61,6 +61,16 @@ describe('Paginator', () => {
     paginator.reset();
     expect(paginator.getCurrentPage()).toBe(1);
   });
+
+  it('respects a custom startPage option', async () => {
+    const paginator = new Paginator({
+      fetchPage: makeFetchPage(mockPages),
+      startPage: 2,
+    });
+    const result = await paginator.fetchCurrent();
+    expect(result.data).toEqual(['c', 'd']);
+    expect(paginator.getCurrentPage()).toBe(2);
+  });
 });
 
 describe('buildQueryParams', () => {
