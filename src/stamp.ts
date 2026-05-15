@@ -18,6 +18,7 @@ export interface Stamp {
   getState: () => StampState;
   reset: () => void;
   toLog: () => string[];
+  hasMark: (label: string) => boolean;
 }
 
 export function createStamp(): Stamp {
@@ -63,5 +64,10 @@ export function createStamp(): Stamp {
     });
   }
 
-  return { mark, elapsed, getState, reset, toLog };
+  /** Returns true if a mark with the given label has been recorded. */
+  function hasMark(label: string): boolean {
+    return entries.some((e) => e.label === label);
+  }
+
+  return { mark, elapsed, getState, reset, toLog, hasMark };
 }
