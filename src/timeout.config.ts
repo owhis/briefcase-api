@@ -43,3 +43,19 @@ export function describeTimeoutState(state: Readonly<TimeoutState>): string {
 export function listTimeoutPresets(): string[] {
   return Object.keys(PRESETS);
 }
+
+/**
+ * Registers a custom timeout preset. Throws if the name conflicts with an
+ * existing preset and `overwrite` is not set to `true`.
+ */
+export function registerTimeoutPreset(
+  name: string,
+  options: TimeoutOptions,
+  overwrite = false,
+): void {
+  if (PRESETS[name] && !overwrite) {
+    throw new Error(`Timeout preset "${name}" already exists. Pass overwrite=true to replace it.`);
+  }
+  validateTimeoutOptions(options);
+  PRESETS[name] = { ...options };
+}
