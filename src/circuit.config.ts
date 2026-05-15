@@ -45,3 +45,17 @@ export function validateCircuitOptions(options: CircuitBreakerOptions): void {
     );
   }
 }
+
+/**
+ * Returns the names of all available circuit breaker presets.
+ */
+export function listCircuitPresets(): CircuitPreset[] {
+  return Object.keys(PRESETS) as CircuitPreset[];
+}
+
+/**
+ * Returns true if the given string is a valid circuit breaker preset name.
+ */
+export function isCircuitPreset(value: string): value is CircuitPreset {
+  return value in PRESETS;
+}
